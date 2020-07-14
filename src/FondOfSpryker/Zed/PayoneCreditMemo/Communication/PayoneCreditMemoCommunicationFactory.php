@@ -3,17 +3,17 @@
 namespace FondOfSpryker\Zed\PayoneCreditMemo\Communication;
 
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToCreditMemoInterface;
+use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToPayoneInterface;
+use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToRefundInterface;
+use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToSalesInterface;
 use FondOfSpryker\Zed\PayoneCreditMemo\PayoneCreditMemoDependencyProvider;
-use SprykerEco\Zed\Payone\Communication\PayoneCommunicationFactory as SprykerEcoPayoneCommunicationFactory;
+use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
 /**
- * @method \SprykerEco\Zed\Payone\PayoneConfig getConfig()
- * @method \SprykerEco\Zed\Payone\Persistence\PayoneQueryContainerInterface getQueryContainer()
- * @method \SprykerEco\Zed\Payone\Persistence\PayoneRepositoryInterface getRepository()
- * @method \SprykerEco\Zed\Payone\Persistence\PayoneEntityManagerInterface getEntityManager()
- * @method \SprykerEco\Zed\Payone\Business\PayoneFacadeInterface getFacade()()
+ * @method \FondOfSpryker\Zed\PayoneCreditMemo\PayoneCreditMemoConfig getConfig()
+ * @method \FondOfSpryker\Zed\PayoneCreditMemo\Business\PayoneCreditMemoFacadeInterface getFacade()
  */
-class PayoneCreditMemoCommunicationFactory extends SprykerEcoPayoneCommunicationFactory
+class PayoneCreditMemoCommunicationFactory extends AbstractCommunicationFactory
 {
     /**
      * @return \FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToCreditMemoInterface
@@ -21,5 +21,29 @@ class PayoneCreditMemoCommunicationFactory extends SprykerEcoPayoneCommunication
     public function getCreditMemoFacade(): PayoneCreditMemoToCreditMemoInterface
     {
         return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_CREDIT_MEMO);
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToRefundInterface
+     */
+    public function getRefundFacade(): PayoneCreditMemoToRefundInterface
+    {
+        return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_REFUND);
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToPayoneInterface
+     */
+    public function getPayoneFacade(): PayoneCreditMemoToPayoneInterface
+    {
+        return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_PAYONE);
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToSalesInterface
+     */
+    public function getSalesFacade(): PayoneCreditMemoToSalesInterface
+    {
+        return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_SALES);
     }
 }

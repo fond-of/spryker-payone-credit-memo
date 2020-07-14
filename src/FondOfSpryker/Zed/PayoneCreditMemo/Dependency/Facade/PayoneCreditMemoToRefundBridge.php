@@ -14,9 +14,7 @@ class PayoneCreditMemoToRefundBridge implements PayoneCreditMemoToRefundInterfac
     protected $refundFacade;
 
     /**
-     * PayoneCreditMemoToRefundBridge constructor.
-     *
-     * @param  \Spryker\Zed\Refund\Business\RefundFacadeInterface  $refundFacade
+     * @param \Spryker\Zed\Refund\Business\RefundFacadeInterface $refundFacade
      */
     public function __construct(RefundFacadeInterface $refundFacade)
     {

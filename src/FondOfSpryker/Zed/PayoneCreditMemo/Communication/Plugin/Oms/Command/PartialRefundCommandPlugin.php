@@ -15,7 +15,7 @@ use SprykerEco\Zed\Payone\Communication\Plugin\Oms\Command\PartialRefundCommandP
 
 /**
  * @method \FondOfSpryker\Zed\PayoneCreditMemo\Communication\PayoneCreditMemoCommunicationFactory getFactory()
- * @method \SprykerEco\Zed\Payone\Business\PayoneFacadeInterface getFacade()
+ * @method \FondOfSpryker\Zed\PayoneCreditMemo\Business\PayoneCreditMemoFacadeInterface getFacade()
  */
 class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
 {
@@ -63,7 +63,7 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                         $payonePartialOperationTransfer->addSalesOrderItemId($orderItem->getIdSalesOrderItem());
                     }
 
-                    $response = $this->getFacade()->executePartialRefund($payonePartialOperationTransfer);
+                    $response = $this->getFactory()->getPayoneFacade()->executePartialRefund($payonePartialOperationTransfer);
                     $results[$creditMemoReference] = $response;
                     $creditMemoUpdateTransfer->setProcessed(true);
                     $creditMemoUpdateTransfer->setProcessedAt(time());
