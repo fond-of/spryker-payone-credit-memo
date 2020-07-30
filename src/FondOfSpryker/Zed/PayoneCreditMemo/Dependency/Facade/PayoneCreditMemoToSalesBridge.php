@@ -8,7 +8,7 @@ use Spryker\Zed\Sales\Business\SalesFacadeInterface;
 class PayoneCreditMemoToSalesBridge implements PayoneCreditMemoToSalesInterface
 {
     /**
-     * @var \SprykerEco\Zed\Payone\Business\PayoneFacadeInterface
+     * @var \Spryker\Zed\Sales\Business\SalesFacadeInterface
      */
     protected $salesFacade;
 
