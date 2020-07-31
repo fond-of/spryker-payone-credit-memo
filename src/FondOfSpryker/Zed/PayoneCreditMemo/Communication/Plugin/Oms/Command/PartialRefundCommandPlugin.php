@@ -59,9 +59,9 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                         ->setOrder($orderTransfer)
                         ->setRefund($refundTransfer);
 
-//                    foreach ($orderItems as $orderItem) {
-//                        $payonePartialOperationTransfer->addSalesOrderItemId($orderItem->getIdSalesOrderItem());
-//                    }
+                    foreach ($orderItems as $orderItem) {
+                        $payonePartialOperationTransfer->addSalesOrderItemId($orderItem->getIdSalesOrderItem());
+                    }
 
                     $response = $this->getFactory()->getPayoneFacade()->executePartialRefund($payonePartialOperationTransfer);
                     $results[$creditMemoReference] = $response;
