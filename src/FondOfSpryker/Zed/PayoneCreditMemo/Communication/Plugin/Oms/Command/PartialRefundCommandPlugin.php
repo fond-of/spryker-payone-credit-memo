@@ -10,7 +10,6 @@ use Generated\Shared\Transfer\RefundResponseTransfer;
 use Generated\Shared\Transfer\RefundTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject;
-use SprykerEco\Shared\Payone\PayoneTransactionStatusConstants;
 use SprykerEco\Zed\Payone\Communication\Plugin\Oms\Command\PartialRefundCommandPlugin as SprykerEcoPartialRefundCommandPlugin;
 
 /**
@@ -20,6 +19,8 @@ use SprykerEco\Zed\Payone\Communication\Plugin\Oms\Command\PartialRefundCommandP
 class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
 {
     use CreditMemoRefundHelperTrait;
+
+    public const REFUND_APPROVED = 'APPROVED';
 
     /**
      * @api
@@ -73,6 +74,10 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                     $creditMemoUpdateTransfer->setRefundedTaxAmount($this->getRefundedTaxAmount($response, $refundTransfer));
                     $creditMemoUpdateTransfer->setTransactionId($response->getTxid());
                     $this->handleErrorStuff($creditMemoUpdateTransfer, $response);
+
+                    if ($creditMemoUpdateTransfer->getWasRefundSuccessful() === true){
+                        $this->getFactory()->getRefundFacade()->saveRefund($refundTransfer);
+                    }
                 }
             }
 
@@ -90,7 +95,7 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
     protected function getState(RefundResponseTransfer $refundResponseTransfer): string
     {
         $status = $refundResponseTransfer->getBaseResponse()->getStatus();
-        if ($status === PayoneTransactionStatusConstants::STATUS_REFUND_APPROVED) {
+        if ($status === static::REFUND_APPROVED) {
             return CreditMemoConstants::STATE_COMPLETE;
         }
 

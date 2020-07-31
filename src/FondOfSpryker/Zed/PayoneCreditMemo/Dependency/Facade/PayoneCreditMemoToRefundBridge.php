@@ -38,4 +38,19 @@ class PayoneCreditMemoToRefundBridge implements PayoneCreditMemoToRefundInterfac
     {
         return $this->refundFacade->calculateRefund($salesOrderItems, $salesOrderEntity);
     }
+
+    /**
+     * Specification:
+     * - Persists calculated Refund amount.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\RefundTransfer $refundTransfer
+     *
+     * @return bool
+     */
+    public function saveRefund(RefundTransfer $refundTransfer)
+    {
+        return $this->refundFacade->saveRefund($refundTransfer);
+    }
 }

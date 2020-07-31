@@ -24,4 +24,16 @@ interface PayoneCreditMemoToRefundInterface
         array $salesOrderItems,
         SpySalesOrder $salesOrderEntity
     ): RefundTransfer;
+
+    /**
+     * Specification:
+     * - Persists calculated Refund amount.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\RefundTransfer $refundTransfer
+     *
+     * @return bool
+     */
+    public function saveRefund(RefundTransfer $refundTransfer);
 }
