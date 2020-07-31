@@ -70,6 +70,7 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                     $creditMemoUpdateTransfer->setState($this->getState($response));
                     $creditMemoUpdateTransfer->setWasRefundSuccessful($this->wasSuccessfullyRefunded($response));
                     $creditMemoUpdateTransfer->setRefundedAmount($this->getRefundedAmount($response, $refundTransfer));
+                    $creditMemoUpdateTransfer->setRefundedTaxAmount($this->getRefundedTaxAmount($response, $refundTransfer));
                     $creditMemoUpdateTransfer->setTransactionId($response->getTxid());
                     $this->handleErrorStuff($creditMemoUpdateTransfer, $response);
                 }
@@ -123,6 +124,23 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
     ): int {
         if ($this->wasSuccessfullyRefunded($refundResponseTransfer)) {
             return $refundTransfer->getAmount();
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\RefundResponseTransfer $refundResponseTransfer
+     * @param \Generated\Shared\Transfer\RefundTransfer $refundTransfer
+     *
+     * @return int
+     */
+    protected function getRefundedTaxAmount(
+        RefundResponseTransfer $refundResponseTransfer,
+        RefundTransfer $refundTransfer
+    ): int {
+        if ($this->wasSuccessfullyRefunded($refundResponseTransfer)) {
+            return 0; //ToDo get or calculate tax
         }
 
         return 0;
