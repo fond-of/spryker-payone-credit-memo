@@ -46,12 +46,18 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
 
         $results = [];
         foreach ($creditMemos as $creditMemoReference => $creditMemoEntity) {
-            $creditMemoUpdateTransfer = new CreditMemoTransfer();
-            $creditMemoUpdateTransfer->setInProgress(false);
+            $creditMemoUpdateTransfer = $this->prepareCreditMemoUpdateTransfer();
             $results[$creditMemoReference] = $creditMemoUpdateTransfer->getInProgress();
             if (array_key_exists($creditMemoReference, $refundItems)) {
                 $itemsToRefund = $this->resolveAndCheckItemsForRefund($refundItems[$creditMemoReference]);
                 $refundTransfer = $this->getFactory()->getRefundFacade()->calculateRefund($itemsToRefund, $orderEntity);
+
+                if ($refundTransfer->getAmount() !== $creditMemoEntity->getTotalAmount()){
+                    $creditMemoUpdateTransfer->setErrorMessage(sprintf('Calculated refund amount of %s is not the same as given amount of %s', $refundTransfer->getAmount(), $creditMemoEntity->getTotalAmount()));
+                    $creditMemoUpdateTransfer->setState(sprintf(CreditMemoConstants::STATE_ERROR));
+                    $this->updateCreditMemo($creditMemoEntity, $creditMemoUpdateTransfer);
+                    continue;
+                }
 
                 if ($this->isRefundableAmount($refundTransfer)) {
                     $orderTransfer = $this->getFactory()->getSalesFacade()->getOrderByIdSalesOrder($orderEntity->getIdSalesOrder());
@@ -66,14 +72,7 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
 
                     $response = $this->getFactory()->getPayoneFacade()->executePartialRefund($payonePartialOperationTransfer);
                     $results[$creditMemoReference] = $response;
-                    $creditMemoUpdateTransfer->setProcessed(true);
-                    $creditMemoUpdateTransfer->setProcessedAt(time());
-                    $creditMemoUpdateTransfer->setState($this->getState($response));
-                    $creditMemoUpdateTransfer->setWasRefundSuccessful($this->wasSuccessfullyRefunded($response));
-                    $creditMemoUpdateTransfer->setRefundedAmount($this->getRefundedAmount($response, $refundTransfer));
-                    $creditMemoUpdateTransfer->setRefundedTaxAmount($this->getRefundedTaxAmount($response, $refundTransfer));
-                    $creditMemoUpdateTransfer->setTransactionId($response->getTxid());
-                    $this->handleErrorStuff($creditMemoUpdateTransfer, $response);
+                    $this->handleRefundResponse($creditMemoUpdateTransfer, $response, $refundTransfer);
 
                     if ($creditMemoUpdateTransfer->getWasRefundSuccessful() === true){
                         $this->getFactory()->getRefundFacade()->saveRefund($refundTransfer);
@@ -165,5 +164,40 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
             $creditMemoUpdateTransfer->setErrorCode($response->getBaseResponse()->getErrorCode());
             $creditMemoUpdateTransfer->setErrorMessage($response->getBaseResponse()->getErrorMessage());
         }
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\CreditMemoTransfer
+     */
+    protected function prepareCreditMemoUpdateTransfer(): CreditMemoTransfer
+    {
+        $creditMemoUpdateTransfer = new CreditMemoTransfer();
+        $creditMemoUpdateTransfer->setInProgress(false)
+            ->setWasRefundSuccessful(false)
+            ->setProcessed(true)
+            ->setProcessedAt(time())
+            ->setRefundedAmount(0)
+            ->setRefundedTaxAmount(0);
+
+        return $creditMemoUpdateTransfer;
+    }
+
+    /**
+     * @param  \Generated\Shared\Transfer\CreditMemoTransfer  $creditMemoUpdateTransfer
+     * @param  \Generated\Shared\Transfer\RefundResponseTransfer  $response
+     * @param  \Generated\Shared\Transfer\RefundTransfer  $refundTransfer
+     */
+    protected function handleRefundResponse(
+        CreditMemoTransfer $creditMemoUpdateTransfer,
+        RefundResponseTransfer $response,
+        RefundTransfer $refundTransfer
+    ): void {
+        $creditMemoUpdateTransfer->setState($this->getState($response))
+            ->setWasRefundSuccessful($this->wasSuccessfullyRefunded($response))
+            ->setRefundedAmount($this->getRefundedAmount($response, $refundTransfer))
+            ->setRefundedTaxAmount($this->getRefundedTaxAmount($response, $refundTransfer))
+            ->setTransactionId($response->getTxid());
+
+        $this->handleErrorStuff($creditMemoUpdateTransfer, $response);
     }
 }
