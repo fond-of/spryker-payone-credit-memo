@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\PayoneCreditMemo;
 
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToCreditMemoBridge;
+use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToOmsBridge;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToPayoneBridge;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToRefundBridge;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToSalesBridge;
@@ -15,6 +16,7 @@ class PayoneCreditMemoDependencyProvider extends AbstractBundleDependencyProvide
     public const FACADE_REFUND = 'FACADE_REFUND';
     public const FACADE_PAYONE = 'FACADE_PAYONE';
     public const FACADE_SALES = 'FACADE_SALES';
+    public const FACADE_OMS = 'FACADE_OMS';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -42,6 +44,7 @@ class PayoneCreditMemoDependencyProvider extends AbstractBundleDependencyProvide
         $container = $this->addRefundFacade($container);
         $container = $this->addPayoneFacade($container);
         $container = $this->addSalesFacade($container);
+        $container = $this->addOmsFacade($container);
 
         return $container;
     }
@@ -97,6 +100,20 @@ class PayoneCreditMemoDependencyProvider extends AbstractBundleDependencyProvide
     {
         $container->set(static::FACADE_SALES, function (Container $container) {
             return new PayoneCreditMemoToSalesBridge($container->getLocator()->sales()->facade());
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addOmsFacade(Container $container)
+    {
+        $container->set(static::FACADE_OMS, function (Container $container) {
+            return new PayoneCreditMemoToOmsBridge($container->getLocator()->oms()->facade());
         });
 
         return $container;
