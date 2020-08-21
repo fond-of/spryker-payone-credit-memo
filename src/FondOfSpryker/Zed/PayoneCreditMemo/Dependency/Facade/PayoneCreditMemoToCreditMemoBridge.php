@@ -6,6 +6,7 @@ use FondOfSpryker\Zed\CreditMemo\Business\CreditMemoFacadeInterface;
 use Generated\Shared\Transfer\CreditMemoResponseTransfer;
 use Generated\Shared\Transfer\CreditMemoTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
+use Propel\Runtime\Collection\ObjectCollection;
 
 class PayoneCreditMemoToCreditMemoBridge implements PayoneCreditMemoToCreditMemoInterface
 {
@@ -64,5 +65,15 @@ class PayoneCreditMemoToCreditMemoBridge implements PayoneCreditMemoToCreditMemo
     public function getCreditMemosBySalesOrderItems(array $salesOrderItems): array
     {
         return $this->creditMemoFacade->getCreditMemosBySalesOrderItems($salesOrderItems);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\CreditMemoTransfer $creditMemoTransfer
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection|null
+     */
+    public function getSalesOrderItemsByCreditMemo(CreditMemoTransfer $creditMemoTransfer): ?ObjectCollection
+    {
+        return $this->creditMemoFacade->getSalesOrderItemsByCreditMemo($creditMemoTransfer);
     }
 }

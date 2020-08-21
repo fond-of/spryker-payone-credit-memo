@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\PayoneCreditMemo\Communication;
 
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToCreditMemoInterface;
+use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToOmsInterface;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToPayoneInterface;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToRefundInterface;
 use FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToSalesInterface;
@@ -45,5 +46,13 @@ class PayoneCreditMemoCommunicationFactory extends AbstractCommunicationFactory
     public function getSalesFacade(): PayoneCreditMemoToSalesInterface
     {
         return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_SALES);
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\PayoneCreditMemo\Dependency\Facade\PayoneCreditMemoToOmsInterface
+     */
+    public function getOmsFacade(): PayoneCreditMemoToOmsInterface
+    {
+        return $this->getProvidedDependency(PayoneCreditMemoDependencyProvider::FACADE_OMS);
     }
 }

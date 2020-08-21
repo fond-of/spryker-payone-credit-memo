@@ -52,10 +52,11 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                 $itemsToRefund = $this->resolveAndCheckItemsForRefund($refundItems[$creditMemoReference]);
                 $refundTransfer = $this->getFactory()->getRefundFacade()->calculateRefund($itemsToRefund, $orderEntity);
 
-                if ($refundTransfer->getAmount() !== $creditMemoEntity->getTotalAmount()){
+                if ($refundTransfer->getAmount() !== $creditMemoEntity->getTotalAmount()) {
                     $creditMemoUpdateTransfer->setErrorMessage(sprintf('Calculated refund amount of %s is not the same as given amount of %s', $refundTransfer->getAmount(), $creditMemoEntity->getTotalAmount()));
                     $creditMemoUpdateTransfer->setState(sprintf(CreditMemoConstants::STATE_ERROR));
                     $this->updateCreditMemo($creditMemoEntity, $creditMemoUpdateTransfer);
+
                     continue;
                 }
 
@@ -74,7 +75,7 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
                     $results[$creditMemoReference] = $response;
                     $this->handleRefundResponse($creditMemoUpdateTransfer, $response, $refundTransfer);
 
-                    if ($creditMemoUpdateTransfer->getWasRefundSuccessful() === true){
+                    if ($creditMemoUpdateTransfer->getWasRefundSuccessful() === true) {
                         $this->getFactory()->getRefundFacade()->saveRefund($refundTransfer);
                     }
                 }
@@ -183,9 +184,11 @@ class PartialRefundCommandPlugin extends SprykerEcoPartialRefundCommandPlugin
     }
 
     /**
-     * @param  \Generated\Shared\Transfer\CreditMemoTransfer  $creditMemoUpdateTransfer
-     * @param  \Generated\Shared\Transfer\RefundResponseTransfer  $response
-     * @param  \Generated\Shared\Transfer\RefundTransfer  $refundTransfer
+     * @param \Generated\Shared\Transfer\CreditMemoTransfer $creditMemoUpdateTransfer
+     * @param \Generated\Shared\Transfer\RefundResponseTransfer $response
+     * @param \Generated\Shared\Transfer\RefundTransfer $refundTransfer
+     *
+     * @return void
      */
     protected function handleRefundResponse(
         CreditMemoTransfer $creditMemoUpdateTransfer,
